@@ -3,6 +3,7 @@ package com.baseflow.geolocator.location;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -74,13 +75,17 @@ public class GeolocationManager
       Context context,
       boolean forceAndroidLocationManager,
       @Nullable LocationOptions locationOptions) {
-    if (forceAndroidLocationManager) {
+    if (forceAndroidLocationManager || isWearOs(context)) {
       return new LocationManagerClient(context, locationOptions);
     }
 
     return isGooglePlayServicesAvailable(context)
         ? new FusedLocationClient(context, locationOptions)
         : new LocationManagerClient(context, locationOptions);
+  }
+
+  static boolean isWearOs(@NonNull Context context) {
+    return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_WATCH);
   }
 
   private boolean isGooglePlayServicesAvailable(Context context) {

@@ -7,9 +7,10 @@ import static org.mockito.Mockito.when;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import org.junit.Test;
 
-public class FusedLocationClientTest {
+public class GeolocationManagerTest {
   @Test
   public void isWearOs_returnsTrueWhenWatchFeatureIsAvailable() {
     Context context = mock(Context.class);
@@ -17,7 +18,7 @@ public class FusedLocationClientTest {
     when(context.getPackageManager()).thenReturn(packageManager);
     when(packageManager.hasSystemFeature(PackageManager.FEATURE_WATCH)).thenReturn(true);
 
-    assertTrue(FusedLocationClient.isWearOs(context));
+    assertTrue(GeolocationManager.isWearOs(context));
   }
 
   @Test
@@ -27,6 +28,20 @@ public class FusedLocationClientTest {
     when(context.getPackageManager()).thenReturn(packageManager);
     when(packageManager.hasSystemFeature(PackageManager.FEATURE_WATCH)).thenReturn(false);
 
-    assertFalse(FusedLocationClient.isWearOs(context));
+    assertFalse(GeolocationManager.isWearOs(context));
+  }
+
+  @Test
+  public void createLocationClient_usesLocationManagerOnWatch() {
+    Context context = mock(Context.class);
+    PackageManager packageManager = mock(PackageManager.class);
+    when(context.getPackageManager()).thenReturn(packageManager);
+    when(packageManager.hasSystemFeature(PackageManager.FEATURE_WATCH)).thenReturn(true);
+    when(context.getSystemService(Context.LOCATION_SERVICE)).thenReturn(mock(LocationManager.class));
+
+    LocationClient client =
+        GeolocationManager.getInstance().createLocationClient(context, false, null);
+
+    assertTrue(client instanceof LocationManagerClient);
   }
 }

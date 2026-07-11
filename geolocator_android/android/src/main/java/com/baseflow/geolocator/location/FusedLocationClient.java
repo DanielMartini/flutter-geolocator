@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.IntentSender;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -162,14 +161,6 @@ class FusedLocationClient implements LocationClient {
 
   @Override
   public void isLocationServiceEnabled(LocationServiceListener listener) {
-    // Wear OS can report an unsuccessful or unusable settings response when this
-    // request has no LocationRequest, even though the system location switch and
-    // GPS provider are enabled. LocationManager is the source of truth on watches.
-    if (isWearOs(context)) {
-      listener.onLocationServiceResult(checkLocationService(context));
-      return;
-    }
-
     LocationServices.getSettingsClient(context)
         .checkLocationSettings(new LocationSettingsRequest.Builder().build())
         .addOnCompleteListener(
@@ -239,18 +230,6 @@ class FusedLocationClient implements LocationClient {
     this.positionChangedCallback = positionChangedCallback;
     this.errorCallback = errorCallback;
 
-    // The Play Services settings resolution UI is not consistently available on
-    // Wear OS 2+. If Android reports location as enabled, request updates directly.
-    // Runtime location permission is still handled by PermissionManager.
-    if (isWearOs(context)) {
-      if (checkLocationService(context)) {
-        requestPositionUpdates(this.locationOptions);
-      } else {
-        errorCallback.onError(ErrorCodes.locationServicesDisabled);
-      }
-      return;
-    }
-
     LocationRequest locationRequest = buildLocationRequest(this.locationOptions);
     LocationSettingsRequest settingsRequest = buildLocationSettingsRequest(locationRequest);
 
@@ -299,9 +278,5 @@ class FusedLocationClient implements LocationClient {
   public void stopPositionUpdates() {
     this.nmeaClient.stop();
     fusedLocationProviderClient.removeLocationUpdates(locationCallback);
-  }
-
-  static boolean isWearOs(@NonNull Context context) {
-    return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_WATCH);
   }
 }
