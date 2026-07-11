@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import android.content.Context;
 import android.location.LocationManager;
+import androidx.core.location.LocationManagerCompat;
 import com.baseflow.geolocator.errors.ErrorCallback;
 
 public interface LocationClient {
@@ -21,10 +22,13 @@ public interface LocationClient {
 
   void stopPositionUpdates();
   
-  default boolean checkLocationService(Context context){
-    LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-    boolean gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-    boolean network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-    return gps_enabled || network_enabled;
+  default boolean checkLocationService(Context context) {
+    if (context == null) {
+      return false;
+    }
+
+    LocationManager locationManager =
+        (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+    return locationManager != null && LocationManagerCompat.isLocationEnabled(locationManager);
   }
 }

@@ -1,3 +1,7 @@
+## NEXT
+
+- Fixes location-service detection and position updates on Wear OS 2 and newer by using Android's native location state and bypassing the unavailable Play Services settings-resolution flow on watches.
+
 ## 5.0.3
 
 - Updates `flutter_lints` to version 6.0.0.

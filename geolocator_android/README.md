@@ -10,6 +10,17 @@ Since version 7.4.0 of the [geolocator](https://pub.dev/packages/geolocator) plu
 
 More detailed instructions on using the API can be found in the [README.md](../geolocator/README.md) of the [geolocator](https://pub.dev/packages/geolocator) package.
 
+## Wear OS
+
+Wear OS 2 and newer are supported. Declare `ACCESS_FINE_LOCATION` or
+`ACCESS_COARSE_LOCATION` in the app manifest and request the permission at runtime
+before requesting a position, as on other Android devices.
+
+On watches, the plugin uses Android's native location-service state and requests
+updates directly from the selected location provider. This avoids relying on the
+Google Play Services settings-resolution dialog, which is not consistently
+available on Wear OS.
+
 ## Issues
 
 Please file any issues, bugs or feature requests as an issue on our [GitHub](https://github.com/Baseflow/flutter-geolocator/issues) page. Commercial support is available, you can contact us at <hello@baseflow.com>.

@@ -48,6 +48,7 @@ public class GeolocationManager
       @Nullable Context context, LocationServiceListener listener) {
     if (context == null) {
       listener.onLocationServiceError(ErrorCodes.locationServicesDisabled);
+      return;
     }
 
     LocationClient locationClient = createLocationClient(context, false, null);
